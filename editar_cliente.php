@@ -1,13 +1,12 @@
 <?php
-
+include('conexao.php');
+$id =intval($_GET['id']);
     function limpar_texto($str){ 
         return preg_replace("/[^0-9]/", "", $str);
     }
 
 $erro = false;
 if (count($_POST) > 0) {
-
-    include('conexao.php');
 
     $nome = $_POST['nome'];
     $telefone = $_POST['telefone'];
@@ -31,7 +30,6 @@ if (count($_POST) > 0) {
         }
     }
 
-
     if(!empty($telefone)){
         $telefone = limpar_texto($telefone);
         if(strlen($telefone) != 11){
@@ -42,15 +40,23 @@ if (count($_POST) > 0) {
     if($erro){
         echo "<p><b>ERRO: $erro</b></p>";
     }else{
-        $sql_code = "INSERT INTO clientes (nome, telefone, email, data_nasc, data_cad) 
-        VALUES('$nome', '$telefone', '$email', '$data_nasc', NOW())";
+        $sql_code = "UPDATE clientes
+        SET nome = '$nome',
+        telefone =  '$telefone', 
+        email = '$email', 
+        data_nasc = '$data_nasc' 
+        WHERE id = '$id'";
         $deu_certo = $mysqli->query($sql_code) or die($mysqli->error);
         if($deu_certo){
-            echo "<p><b>Cliente cadastrado com sucesso!!!</b></p>";
+            echo "<p><b>Cliente atualizado com sucesso!!!</b></p>";
             unset($_POST);
         }
     }
 }
+
+$sql_con_cliente = "SELECT * FROM clientes WHERE id = '$id'";
+$query_cliente = $mysqli->query($sql_con_cliente) or die($mysqli->error);
+$cliente = $query_cliente->fetch_assoc();
 
 ?>
 
@@ -68,19 +74,19 @@ if (count($_POST) > 0) {
     <h1>CADASTRAR</h1>
         <p>
             <label>Nome: </label>
-            <input value="<?php if (isset($_POST['nome'])) echo $_POST['nome']; ?>" type=text name=nome>
+            <input value="<?php echo $cliente['nome']; ?>" type=text name=nome>
         </p>
         <p>
             <label>Telefone: </label>
-            <input value="<?php if (isset($_POST['telefone'])) echo $_POST['telefone']; ?>" type="text" name=telefone placeholder="(11) 98888-8888">
+            <input value="<?php if(!empty($cliente['telefone']))  echo formatar_telefone($cliente['telefone']); ?>" type="text" name=telefone placeholder="(11) 98888-8888">
         </p>
         <p>
             <label>E-mail: </label>
-            <input value="<?php if (isset($_POST['email'])) echo $_POST['email']; ?>" type=text name=email>
+            <input value="<?php echo $cliente['email']; ?>" type=text name=email>
         </p>
         <p>
             <label>Data de Nascimento</label>
-            <input value="<?php if (isset($_POST['data_nasc'])) echo $_POST['data_nasc']; ?>" type=text name=data_nasc placeholder="dd/mm/aaaa">
+            <input value="<?php if(!empty($cliente['data_nasc'])) echo formatar_data($cliente['data_nasc']); ?>" type=text name=data_nasc placeholder="dd/mm/aaaa">
         </p>
         <p>
             <button type="submit">Cadastrar</button>
