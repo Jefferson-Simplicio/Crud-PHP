@@ -56,7 +56,7 @@
                         <td><?php echo $data?></td>
                         <td><?php echo $data_cadastro?></td>
                         <td><a href="editar_cliente.php?id=<?php echo $clientes['id']; ?>">Editar</a>
-                            <a href="excluir.cliente.php?id=<?php echo $clientes['id']; ?>">Excluir</a></td>
+                            <a href="excluir_cliente.php?id=<?php echo $clientes['id']; ?>">Excluir</a></td>
                     </tr>
                 <?php }
             } ?>    
